@@ -10,5 +10,3 @@ So, instead of using separate citation commands like \cite{Sampson2016}\cite{Sal
 you could use a citekey with comma-separated entries as shown here \cite{Sampson2016,Salzberg1997,Cawley2010},  
 here \cite{Stone1974,Sampson2016,Salzberg1997}  
 or here \cite{Sampson2016,Cawley2010}.
-
-
