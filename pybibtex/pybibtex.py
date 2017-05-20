@@ -6,6 +6,9 @@
 # License: MIT
 # Code Repository: https://github.com/rasbt/pybibtex
 
+from operator import itemgetter
+from itertools import groupby
+
 
 def parse_bibfile(bib_path):
     """Read a bibtex file into a dictionary."""
@@ -29,6 +32,34 @@ def parse_bibfile(bib_path):
                         entries[key] = value
                     dct[citekey] = entries
     return dct
+
+
+def split_multiciteky(citekey):
+    """Splits a multi-citekey into individual citekeys"""
+    splt = citekey.split('\cite{')[-1].rstrip('}')
+    splt = [c.strip() for c in splt.split(',')]
+    return ['\cite{%s}' % c for c in splt]
+
+
+def ids_to_string(ids_list):
+    """Converts lists of integer IDs to text"""
+    sorted_ids = sorted(ids_list)
+    ranges = []
+    for key, group in groupby(enumerate(sorted_ids), lambda x: x[0] - x[1]):
+        group = list(map(itemgetter(1), group))
+        if len(group) > 1:
+            ranges.append([group[0], group[-1]])
+        else:
+            ranges.append(group[0])
+
+    parsed = []
+    for r in ranges:
+        if isinstance(r, list):
+            parsed.append('%d-%d' % (r[0], r[1]))
+        else:
+            parsed.append(str(r))
+
+    return '[%s]' % ','.join(parsed)
 
 
 def bibentry_to_style(bibentry, style='default'):
@@ -74,23 +105,40 @@ def get_cites(text_lines):
                 raise ValueError('No closing braces found in line %d: %s' %
                                  (idx+1, line))
 
-            yield line[orig_start: end+1]
+            citekey = line[orig_start: end+1]
+            yield citekey
 
 
 def build_citekey_dict(text_lines):
     """Create a citekey dictionary from text lines"""
     dct = {}
     idx_cnt = 1
-    for cite in get_cites(text_lines):
-        if cite not in dct:
-            dct[cite] = '[%d]' % (idx_cnt)
-            idx_cnt += 1
+    for citekey in get_cites(text_lines):
+        if ',' in citekey:
+            citekeys = split_multiciteky(citekey)
+        else:
+            citekeys = [citekey]
+        for key in citekeys:
+            if key not in dct:
+                dct[key] = '[%d]' % (idx_cnt)
+                idx_cnt += 1
     return dct
 
 
 def replace_citekeys(text_lines, citekey_dict):
     """Substitute citekeys by reference IDs"""
     for line in text_lines:
-        for k in citekey_dict:
-            line = line.replace(k, citekey_dict[k])
+        citekeys = get_cites(text_lines=[line])
+        for key in citekeys:
+            if ',' in key:
+                keys = split_multiciteky(key)
+                id_key = ''.join(citekey_dict[k] for k in keys)
+                id_key = id_key.replace('][', ',')
+                ids_list = [int(i) for i in id_key[1:-1].split(',')]
+                id_key = ids_to_string(ids_list)
+
+            else:
+                id_key = citekey_dict[key]
+
+            line = line.replace(key, id_key)
         yield line
