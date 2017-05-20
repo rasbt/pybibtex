@@ -4,7 +4,7 @@
 
 # pybibtex
 
-Utility functions for parsing BibTex files and creating citation reference lists.
+Utility functions for parsing BibTeX files and creating citation reference lists.
 
 ## Examples
 

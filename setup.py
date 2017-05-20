@@ -1,5 +1,5 @@
 # pybibtext -- Utility functions for
-# parsing BibTex files and creating citation reference
+# parsing BibTeX files and creating citation reference
 # lists.
 #
 # Author: Sebastian Raschka <mail@sebastianraschka.com>
@@ -40,7 +40,7 @@ setup(name='pybibtex',
       ],
       long_description="""
 pybibtext is a package that provides utility functions for
-parsing BibTex files and creating citation reference lists
+parsing BibTeX files and creating citation reference lists
 
 Contact
 =============
