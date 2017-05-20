@@ -8,4 +8,4 @@ Utility functions for parsing BibTex files and creating citation referenc lists.
 
 ## Examples
 
-- [Python Markdown Parsing Examples](https://github.com/rasbt/mputil/blob/master/examples/bibtex-markdown-examples.ipynb)
+- [Python Markdown Parsing Examples](https://github.com/rasbt/pybibtex/blob/master/examples/bibtex-markdown-examples.ipynb)
