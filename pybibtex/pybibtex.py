@@ -80,9 +80,11 @@ def get_cites(text_lines):
 def build_citekey_dict(text_lines):
     """Create a citekey dictionary from text lines"""
     dct = {}
-    for idx, cite in enumerate(get_cites(text_lines)):
+    idx_cnt = 1
+    for cite in get_cites(text_lines):
         if cite not in dct:
-            dct[cite] = '[%d]' % (idx + 1)
+            dct[cite] = '[%d]' % (idx_cnt)
+            idx_cnt += 1
     return dct
 
 
