@@ -10,8 +10,17 @@ from operator import itemgetter
 from itertools import groupby
 
 
-def parse_bibfile(bib_path):
-    """Read a bibtex file into a dictionary."""
+def parse_bibfile_to_cite_dict(bib_path):
+    """Read a bibtex file into a dictionary.
+    Returned dictionary has the form:
+
+    {'\\cite{citekey-of-article}': {},
+     '\\cite{citekey-of-article}': {},
+     '\\cite{citekey-of-article}': {},
+     ...
+    }
+
+    """
     dct = {}
     with open(bib_path, 'r') as f:
         for line in f:
@@ -31,6 +40,39 @@ def parse_bibfile(bib_path):
                         value = value.strip()[1:-1].strip('{}')
                         entries[key] = value
                     dct[citekey] = entries
+    return dct
+
+
+def parse_bibfile_to_dict(bib_path):
+    """Read a bibtex file into a dictionary.
+    Returned dictionary has the form:
+
+    {'alberga2018prediction': ['title={Prediction of ... }'],
+     'hawkins2007comparison': ['title={Comparison of ... }'],\
+     ...
+
+    }
+
+    """
+    dct = {}
+    with open(bib_path, 'r') as f:
+        txt = f.readlines()
+        citekey = None
+        entries = []
+        for line in txt:
+            line = line.strip()
+            if line:
+                if line.startswith('@'):
+                    if citekey is not None:
+                        dct[citekey] = entries
+                    entries = []
+                    start = line.find('{')
+                    end = line.find(',')
+                    citekey = '%s' % line[start+1:end].lower()
+                entries.append(line)
+    if citekey is not None:
+        dct[citekey] = entries
+
     return dct
 
 

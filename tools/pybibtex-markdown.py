@@ -13,7 +13,7 @@
 import argparse
 from pybibtex import build_citekey_dict
 from pybibtex import replace_citekeys
-from pybibtex import parse_bibfile
+from pybibtex import parse_bibfile_to_citedict
 from pybibtex import bibentry_to_style
 from pybibtex import __version__
 
@@ -47,7 +47,7 @@ def main(file_path, out_path, bib_path):
     text_lines = read_text_from_file(file_path)
     citekey_dict = build_citekey_dict(text_lines)
     new_text = replace_citekeys_in_text(text_lines, citekey_dict)
-    bib_dict = parse_bibfile(bib_path=bib_path)
+    bib_dict = parse_bibfile_to_citedict(bib_path=bib_path)
     reference_section = create_reference_section(citekey_dict, bib_dict)
     write_new_text(out_path, text=new_text + reference_section)
 
